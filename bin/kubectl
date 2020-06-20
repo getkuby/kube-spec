@@ -1,0 +1,8 @@
+#! /usr/bin/env ruby
+
+require 'kube-spec'
+require 'pry-byebug'
+
+statement = KubeSpec::CLIParser.parse(ARGV)
+binding.pry
+exit 0
