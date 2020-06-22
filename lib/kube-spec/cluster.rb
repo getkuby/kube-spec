@@ -24,7 +24,7 @@ module KubeSpec
       ]
 
       # TODO: do this differently
-      @resources.map!(&:serialize)
+      @resources.map! { |r| r.to_resource.serialize }
     end
 
     def kubeconfig
@@ -53,10 +53,10 @@ module KubeSpec
       kind = KubeSpec.normalize_kind(kind)
 
       resources.select do |rsrc|
-        rsrc_labels = rsrc[:metadata][:labels]
+        rsrc_labels = rsrc['metadata']['labels']
 
-        kind == KubeSpec.normalize_kind(rsrc[:kind]) &&
-          rsrc[:metadata][:namespace] == namespace &&
+        kind == KubeSpec.normalize_kind(rsrc['kind']) &&
+          rsrc['metadata']['namespace'] == namespace &&
           selector.all? do |k, v|
             rsrc_labels.include?(k) && rsrc_labels[k] == v
           end
@@ -67,8 +67,8 @@ module KubeSpec
       kind = KubeSpec.normalize_kind(kind)
 
       resources.find do |rsrc|
-        kind == KubeSpec.normalize_kind(rsrc[:kind]) &&
-          name == rsrc[:metadata][:name]
+        kind == KubeSpec.normalize_kind(rsrc['kind']) &&
+          name == rsrc['metadata']['name']
       end
     end
   end

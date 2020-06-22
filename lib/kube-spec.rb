@@ -46,7 +46,7 @@ module KubeSpec
 
   class << self
     def normalize_kind(kind)
-      KIND_MAP[kind.downcase]
+      KIND_MAP.fetch(kind.downcase, kind.downcase)
     end
   end
 end

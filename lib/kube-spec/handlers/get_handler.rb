@@ -16,13 +16,19 @@ module KubeSpec
           resources += cluster.get_resources(kind)
         end
 
-        resources.each do |resource|
-          case statement.command_options[:output]
-            when 'name'
-              puts "#{kind}/#{resource[:metadata][:name]}"
-            when 'json'
-              puts JSON.pretty_generate(resource)
-          end
+        case statement.command_options[:output]
+          when 'name'
+            resources.each do |resource|
+              puts "#{kind}/#{resource['metadata']['name']}"
+            end
+          when 'json'
+            if resource_name
+              unless resources.empty?
+                puts JSON.pretty_generate(resources.first)
+              end
+            else
+              puts JSON.pretty_generate({ apiVersion: 'v1', kind: 'List', items: resources })
+            end
         end
       end
     end

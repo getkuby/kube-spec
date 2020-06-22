@@ -1,8 +1,9 @@
 module KubeSpec
   module Handlers
-    autoload :ConfigHandler, 'kube-spec/handlers/config_handler'
-    autoload :GetHandler, 'kube-spec/handlers/get_handler'
-    autoload :Handler,    'kube-spec/handlers/handler'
+    autoload :ConfigHandler,  'kube-spec/handlers/config_handler'
+    autoload :GetHandler,     'kube-spec/handlers/get_handler'
+    autoload :Handler,        'kube-spec/handlers/handler'
+    autoload :VersionHandler, 'kube-spec/handlers/version_handler'
 
     class MissingHandlerError < StandardError; end
 
@@ -22,7 +23,7 @@ module KubeSpec
           end
         end
 
-        unless current
+        if !current || !current.value
           raise MissingHandlerError, "handler for #{cmds.inspect} not found"
         end
 
@@ -40,4 +41,5 @@ end
 
 KubeSpec::Handlers.register_handler(['get'], KubeSpec::Handlers::GetHandler)
 KubeSpec::Handlers.register_handler(['config'], KubeSpec::Handlers::ConfigHandler)
+KubeSpec::Handlers.register_handler(['version'], KubeSpec::Handlers::VersionHandler)
 

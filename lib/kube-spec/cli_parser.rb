@@ -76,7 +76,7 @@ module KubeSpec
 
     def parse_args(arglist)
       arglist.flat_map do |arg|
-        if m = arg.match(/^-{1,2}\w+(=)/)
+        if m = arg.match(/^-{1,2}[\w-]+(=)/)
           idx = m.begin(1)
           [arg[0...idx], arg[(idx + 1)..-1]]
         else
