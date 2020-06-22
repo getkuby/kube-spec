@@ -1,14 +1,18 @@
 module KubeSpec
   autoload :CLI,           'kube-spec/cli'
   autoload :CLIParser,     'kube-spec/cli_parser'
+  autoload :Cluster,       'kube-spec/cluster'
   autoload :Command,       'kube-spec/command'
   autoload :CommandParser, 'kube-spec/command_parser'
   autoload :CommandTrie,   'kube-spec/command_trie'
+  autoload :Handlers,      'kube-spec/handlers'
   autoload :OptionsParser, 'kube-spec/options_parser'
   autoload :Options,       'kube-spec/options'
   autoload :Option,        'kube-spec/option'
   autoload :SectionParser, 'kube-spec/section_parser'
+  autoload :Server,        'kube-spec/server'
   autoload :Statement,     'kube-spec/statement'
+  autoload :Trie,          'kube-spec/trie'
 
   KIND_MAP = {
     'ns'     => 'namespace',
@@ -42,7 +46,7 @@ module KubeSpec
 
   class << self
     def normalize_kind(kind)
-      KIND_MAP[kind]
+      KIND_MAP[kind.downcase]
     end
   end
 end

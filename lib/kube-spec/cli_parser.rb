@@ -1,13 +1,13 @@
 module KubeSpec
   class CLIParser
-    def self.parse(args)
-      new(args).statement
+    def self.parse(arglist)
+      new(arglist).statement
     end
 
     attr_reader :arglist, :statement
 
     def initialize(arglist)
-      @arglist = arglist
+      @arglist = parse_args(arglist)
 
       parse
     end
@@ -19,7 +19,7 @@ module KubeSpec
       global_options = extract_options_from(args, CLI.global_options)
       command = extract_command_from(args)
       command_options = extract_options_from(args, command.options)
-      @statement = Statement.new(global_options, command, command_options)
+      @statement = Statement.new(global_options, command, command_options, args, arglist)
     end
 
     def extract_options_from(args, possible_options)
@@ -49,9 +49,9 @@ module KubeSpec
     def compile_options_considering(provided_options, possible_options, args)
       possible_options.each_with_object({}) do |option, ret|
         if opt = provided_options[option.name]
-          ret[option.name] = args[opt[:index] + 1]
+          ret[option.name.to_sym] = Option.coerce_value(args[opt[:index] + 1])
         else
-          ret[option.name] = option.default
+          ret[option.name.to_sym] = option.default
         end
       end
     end
@@ -72,6 +72,17 @@ module KubeSpec
       end
 
       current&.value
+    end
+
+    def parse_args(arglist)
+      arglist.flat_map do |arg|
+        if m = arg.match(/^-{1,2}\w+(=)/)
+          idx = m.begin(1)
+          [arg[0...idx], arg[(idx + 1)..-1]]
+        else
+          [arg]
+        end
+      end
     end
   end
 end

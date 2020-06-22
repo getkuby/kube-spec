@@ -1,8 +1,20 @@
 #! /usr/bin/env ruby
 
 require 'kube-spec'
+require 'drb/drb'
 require 'pry-byebug'
 
+uri = ENV.fetch('KUBE_SPEC_SERVER_URI', KubeSpec::Server::DEFAULT_URI)
 statement = KubeSpec::CLIParser.parse(ARGV)
-binding.pry
-exit 0
+server = DRbObject.new_with_uri(uri)
+puts server.evaluate(statement)
+
+# File.open('/Users/cdutro/Desktop/kube_commands.txt', 'a') do |f|
+#   f.puts(['kubectl', *ARGV].join(' '))
+#   f.puts('============================================================')
+#   result = `#{[KubectlRb.executable, *ARGV].join(' ')}`
+#   f.puts(result)
+#   STDOUT.write(result)
+# end
+
+# exit $?.exitstatus

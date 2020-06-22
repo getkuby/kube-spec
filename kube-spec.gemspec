@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rspec', '~> 3.0'
   s.add_dependency 'kubectl-rb', '~> 0.1'
+  s.add_dependency 'kube-dsl', '~> 0.3'
 
   s.require_path = 'lib'
   s.files = Dir['{lib,spec}/**/*', 'Gemfile', 'LICENSE', 'CHANGELOG.md', 'README.md', 'Rakefile', 'kube-spec.gemspec']

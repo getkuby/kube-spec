@@ -24,21 +24,7 @@ module KubeSpec
 
       opts.each do |opt|
         abbrev_name, name, default = opt.match(/-?(\w+)?(?:, )?--([\w-]+)=?([^:]*):/).captures
-        options << Option.new(abbrev_name, name, coerce(default))
-      end
-    end
-
-    def coerce(val)
-      if val.start_with?("'") && val.end_with?("'")
-        val[1..-2]
-      elsif val =~ /^\d+$/
-        val.to_i
-      elsif val == 'true'
-        true
-      elsif val == 'false'
-        false
-      else
-        val
+        options << Option.new(abbrev_name, name, Option.coerce_value(default))
       end
     end
   end

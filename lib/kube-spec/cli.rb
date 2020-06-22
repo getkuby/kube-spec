@@ -6,7 +6,7 @@ module KubeSpec
 
     class << self
       def commands
-        @commands ||= begin
+        @commands ||= spec[:commands] || begin
           cli_help = `kubectl --help`
           sections = SectionParser.parse(cli_help, HEADER_RE)
 
@@ -27,11 +27,24 @@ module KubeSpec
       end
 
       def global_options
-        @global_options ||= OptionsParser.parse(`#{kubectl} options`)
+        @global_options ||= spec[:global_options] ||
+          OptionsParser.parse(`#{kubectl} options`)
       end
 
       def kubectl
         KubectlRb.executable
+      end
+
+      def spec
+        @spec ||= if File.exist?(spec_file)
+          Marshal.load(File.read(spec_file))
+        else
+          {}
+        end
+      end
+
+      def spec_file
+        @spec_file ||= File.expand_path(File.join('.', 'cli_spec.dump'), __dir__)
       end
     end
   end
