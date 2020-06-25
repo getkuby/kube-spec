@@ -2,9 +2,11 @@ require 'kube-dsl'
 
 module KubeSpec
   class Cluster
-    attr_reader :resources
+    attr_reader :name, :resources, :api_resources, :kubeconfig
 
-    def initialize
+    def initialize(name)
+      @name = name
+
       @resources = [
         KubeDSL.namespace do
           metadata { name 'default' }
@@ -25,37 +27,17 @@ module KubeSpec
 
       # TODO: do this differently
       @resources.map! { |r| r.to_resource.serialize }
-    end
 
-    def kubeconfig
-      @kubeconfig ||= {
-        clusters: [{
-          name: 'test-cluster',
-          cluster: {
-            server: 'https://test.com'
-          },
-        }],
-        contexts: [{
-          name: 'test-context',
-          context: {
-            cluster: 'test-cluster',
-            user: 'test-user'
-          }
-        }],
-        :'current-context' => 'test-context',
-        users: [{
-          name: 'test-user'
-        }]
-      }
+      @api_resources = ApiResources.create
     end
 
     def get_resources(kind, namespace = nil, selector = {})
-      kind = KubeSpec.normalize_kind(kind)
+      kind = normalize_kind(kind)
 
       resources.select do |rsrc|
         rsrc_labels = rsrc['metadata']['labels']
 
-        kind == KubeSpec.normalize_kind(rsrc['kind']) &&
+        kind == normalize_kind(rsrc['kind']) &&
           rsrc['metadata']['namespace'] == namespace &&
           selector.all? do |k, v|
             rsrc_labels.include?(k) && rsrc_labels[k] == v
@@ -63,12 +45,23 @@ module KubeSpec
       end
     end
 
-    def get_resource(kind, name)
-      kind = KubeSpec.normalize_kind(kind)
+    def get_resource(kind, name, namespace = nil)
+      kind = normalize_kind(kind)
 
       resources.find do |rsrc|
-        kind == KubeSpec.normalize_kind(rsrc['kind']) &&
-          name == rsrc['metadata']['name']
+        kind == normalize_kind(rsrc['kind']) &&
+          name == rsrc['metadata']['name'] &&
+          rsrc['metadata']['namespace'] == namespace
+      end
+    end
+
+    def normalize_kind(str)
+      api_resources.normalize_kind(str)
+    end
+
+    def get_api_resource(kind)
+      api_resources.find do |api_resource|
+        api_resource.kind == kind
       end
     end
   end

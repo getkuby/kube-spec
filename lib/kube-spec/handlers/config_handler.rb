@@ -1,9 +1,9 @@
 module KubeSpec
   module Handlers
-    class ConfigHandler < Handler
+    class ConfigHandler < ClientHandler
       def evaluate(statement)
         case statement.command.cmd[1]
-          when 'get-contexts'
+          when 'get-contexts', 'get-context'
             get_contexts(statement)
         end
       end
@@ -11,17 +11,17 @@ module KubeSpec
       private
 
       def get_contexts(statement)
-        clusters = []
+        contexts = []
 
         if context = statement.args[0]
-          if found = cluster.kubeconfig[:clusters].find { |c| c[:name] == context }
-            clusters << found
+          if found = client.kubeconfig[:contexts].find { |c| c[:name] == context }
+            contexts << found
           end
         else
-          clusters += cluster.kubeconfig[:clusters]
+          contexts += client.kubeconfig[:contexts]
         end
 
-        clusters.each do |c|
+        contexts.each do |c|
           if statement.command_options[:output] == 'name'
             puts c[:name]
           end

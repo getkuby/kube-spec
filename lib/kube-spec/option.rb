@@ -1,7 +1,9 @@
 module KubeSpec
   class Option
     def self.coerce_value(val)
-      if val.start_with?("'") && val.end_with?("'")
+      if val == "''"
+        nil
+      elsif val.start_with?("'") && val.end_with?("'")
         val[1..-2]
       elsif val =~ /^\d+$/
         val.to_i

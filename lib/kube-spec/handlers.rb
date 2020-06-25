@@ -1,9 +1,12 @@
 module KubeSpec
   module Handlers
-    autoload :ConfigHandler,  'kube-spec/handlers/config_handler'
-    autoload :GetHandler,     'kube-spec/handlers/get_handler'
-    autoload :Handler,        'kube-spec/handlers/handler'
-    autoload :VersionHandler, 'kube-spec/handlers/version_handler'
+    autoload :ApiResourcesHandler, 'kube-spec/handlers/api_resources_handler'
+    autoload :ApplyHandler,        'kube-spec/handlers/apply_handler'
+    autoload :ClientHandler,       'kube-spec/handlers/client_handler'
+    autoload :ConfigHandler,       'kube-spec/handlers/config_handler'
+    autoload :GetHandler,          'kube-spec/handlers/get_handler'
+    autoload :ServerHandler,       'kube-spec/handlers/server_handler'
+    autoload :VersionHandler,      'kube-spec/handlers/version_handler'
 
     class MissingHandlerError < StandardError; end
 
@@ -42,4 +45,5 @@ end
 KubeSpec::Handlers.register_handler(['get'], KubeSpec::Handlers::GetHandler)
 KubeSpec::Handlers.register_handler(['config'], KubeSpec::Handlers::ConfigHandler)
 KubeSpec::Handlers.register_handler(['version'], KubeSpec::Handlers::VersionHandler)
-
+KubeSpec::Handlers.register_handler(['api-resources'], KubeSpec::Handlers::ApiResourcesHandler)
+KubeSpec::Handlers.register_handler(['apply'], KubeSpec::Handlers::ApplyHandler)

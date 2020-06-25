@@ -4,10 +4,15 @@ require 'kube-spec'
 require 'drb/drb'
 require 'pry-byebug'
 
-uri = ENV.fetch('KUBE_SPEC_SERVER_URI', KubeSpec::Server::DEFAULT_URI)
-statement = KubeSpec::CLIParser.parse(ARGV)
+uri = ENV.fetch('KUBE_SPEC_SERVER_URI', KubeSpec::DEFAULT_URI)
 server = DRbObject.new_with_uri(uri)
-STDOUT.write server.evaluate(statement)
+
+begin
+  STDOUT.write(server.evaluate(ARGV))
+rescue => e
+  STDERR.puts e.message
+  exit 1
+end
 
 # File.open('/Users/cdutro/Desktop/kube_commands.txt', 'a') do |f|
 #   f.puts(['kubectl', *ARGV].join(' '))

@@ -1,10 +1,14 @@
 module KubeSpec
   module Handlers
-    class Handler
-      attr_reader :cluster
+    class ClientHandler
+      def self.server?
+        false
+      end
 
-      def initialize(cluster)
-        @cluster = cluster
+      attr_reader :client
+
+      def initialize(client)
+        @client = client
       end
 
       def evaluate(statement)

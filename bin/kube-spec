@@ -5,8 +5,8 @@ require 'drb/drb'
 
 case ARGV[0]
   when 'serve'
-    uri = ENV.fetch('KUBE_SPEC_SERVER_URI', KubeSpec::Server::DEFAULT_URI)
-    DRb.start_service(uri, KubeSpec::Server.new)
+    uri = ENV.fetch('KUBE_SPEC_SERVER_URI', KubeSpec::DEFAULT_URI)
+    DRb.start_service(uri, KubeSpec::TestSystem.new)
     puts "DRb server started on #{uri}"
     DRb.thread.join
   else
